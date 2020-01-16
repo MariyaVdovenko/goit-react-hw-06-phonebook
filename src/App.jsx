@@ -1,116 +1,115 @@
-import React, { Component } from 'react';
+import React, { useState, useReducer, useMemo } from 'react';
 import styles from './App.module.css';
-import ContactForm from './Components/ContactForm/ContactForm';
-
-import ContactList from './Components/ContactList/ContactList';
 import shortId from 'shortid';
 import 'react-notifications/lib/notifications.css';
-import {
-  NotificationContainer,
-  NotificationManager,
-} from 'react-notifications';
+import { NotificationContainer } from 'react-notifications';
 import allContacts from './contacts.json';
-import T from 'prop-types';
 
-//Телефонная книга
-// Возьми свое решение задания из домашней работы 2 и добавь хранение контактов
-// телефонной книги в localStorage. Используй методы жизненного цикла.
-
-// При добавлении и удалении контакта, контакты сохраняются в локальное хранилище.
-// При загрузке приложения, контакты, если таковые есть, считываются из локального
-// хранилища и записываются в состояние.
-
-export default class App extends Component {
-  static propTypes = {
-    allContacts: T.arrayOf(
-      T.shape({
-        id: T.string.isRequired,
-        name: T.string,
-        number: T.string,
-      }),
-    ),
-  };
-
-  state = {
-    contacts: allContacts,
-  };
-
-  componentDidMount() {
-    try {
-      const contacts = localStorage.getItem('contacts');
-      if (contacts) {
-        const parsedContacts = JSON.parse(contacts);
-
-        this.setState({ contacts: parsedContacts });
-      }
-    } catch (e) {}
+const contactsReduser = (state, action) => {
+  switch (action.type) {
+    case 'addContact':
+      return [...state, action.payload.contact];
+    case 'removeContact':
+      return state.filter(contact => contact.id !== action.payload.contactId);
+    default:
+      return state;
   }
+};
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
-
-  onSubmit = (name, number) => {
-    const { contacts } = this.state;
-    const filr = contacts.find(contact => {
-      return contact.name.toLowerCase() === name.toLowerCase();
-    });
-
-    if (filr !== undefined) {
-      NotificationManager.warning(
-        `${name} already exist`,
-        'Try another name',
-        3000,
-      );
-      return;
-    }
-    if (filr !== undefined) {
-      NotificationManager.warning(
-        `${name} already exist`,
-        'Try another name',
-        3000,
-      );
-      return;
-    }
-
-    this.saveContact(name, number);
+export default function App() {
+  const [name, setName] = useState('');
+  const changeName = e => {
+    setName(e.target.value);
+  };
+  const [number, setNumber] = useState('');
+  const changeNumber = e => {
+    setNumber(e.target.value);
   };
 
-  saveContact(name, number) {
+  const [contacts, dispatch] = useReducer(contactsReduser, allContacts);
+
+  const addContacts = (name, number) => {
     const contact = {
       id: shortId.generate(),
       name: name,
       number: number,
     };
-
-    this.addContact(contact);
-  }
-
-  addContact(contact) {
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, contact],
-    }));
-  }
-
-  deleteContact = contactId => {
-    this.setState(state => ({
-      contacts: state.contacts.filter(contact => contact.id !== contactId),
-    }));
+    dispatch({ type: 'addContact', payload: { contact } });
   };
 
-  render() {
-    const { contacts } = this.state;
-    return (
-      <div className={styles.App}>
-        <h1 className={styles.AppText}>Phonebook</h1>
-        <ContactForm onSubmit={this.onSubmit} />
-        <h2 className={styles.AppText}>Contacts</h2>
+  const removeContact = contactId => {
+    dispatch({ type: 'removeContact', payload: { contactId } });
+  };
 
-        <ContactList contacts={contacts} onDeleteContact={this.deleteContact} />
-        <NotificationContainer />
-      </div>
+  const [filter, setFilter] = useState('');
+  const changeFilter = e => {
+    setFilter(e.target.value);
+  };
+
+  const filtredContacts = useMemo(() => {
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase()),
     );
-  }
+  });
+
+  return (
+    <div className={styles.App}>
+      <h1 className={styles.AppText}>Phonebook</h1>
+      <form className={styles.Form} onSubmit={addContacts}>
+        <label className={styles.Label}>
+          <span className={styles.Label__text}>Name</span>
+          <input
+            className={styles.Input}
+            type="text"
+            placeholder="Enter name (min 3 symb) "
+            value={name}
+            name="name"
+            onChange={changeName}
+            pattern="[A-Za-z]{3,}"
+          />
+          <input
+            className={styles.Input}
+            type="number"
+            placeholder="Enter number"
+            name="number"
+            value={number}
+            onChange={changeNumber}
+          />
+        </label>
+
+        <button className={styles.Button} type="submit">
+          Add contact
+        </button>
+      </form>
+
+      <h2 className={styles.AppText}>Contacts</h2>
+      <section>
+        <input
+          className={styles.Input}
+          type="text"
+          name="filter"
+          value={filter}
+          onChange={changeFilter}
+        />
+      </section>
+
+      <ul>
+        {filtredContacts.map(contact => (
+          <li key={contact.id} className={styles.ContactListItem}>
+            <p className={styles.name}>
+              {contact.name}: {contact.number}
+            </p>
+            <button
+              className={styles.Button}
+              onClick={() => removeContact(contact.id)}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <NotificationContainer />
+    </div>
+  );
 }
