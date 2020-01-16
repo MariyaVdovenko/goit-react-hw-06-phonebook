@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/goit-react-hw-06-phonebook/static/css/main.fa5e01cc.chunk.css",
-    "main.js": "/goit-react-hw-06-phonebook/static/js/main.7b08f2ab.chunk.js",
-    "main.js.map": "/goit-react-hw-06-phonebook/static/js/main.7b08f2ab.chunk.js.map",
+    "main.css": "/goit-react-hw-06-phonebook/static/css/main.8db701a7.chunk.css",
+    "main.js": "/goit-react-hw-06-phonebook/static/js/main.473d8796.chunk.js",
+    "main.js.map": "/goit-react-hw-06-phonebook/static/js/main.473d8796.chunk.js.map",
     "runtime-main.js": "/goit-react-hw-06-phonebook/static/js/runtime-main.af6721dc.js",
     "runtime-main.js.map": "/goit-react-hw-06-phonebook/static/js/runtime-main.af6721dc.js.map",
     "static/css/2.66c32828.chunk.css": "/goit-react-hw-06-phonebook/static/css/2.66c32828.chunk.css",
-    "static/js/2.9c0d439d.chunk.js": "/goit-react-hw-06-phonebook/static/js/2.9c0d439d.chunk.js",
-    "static/js/2.9c0d439d.chunk.js.map": "/goit-react-hw-06-phonebook/static/js/2.9c0d439d.chunk.js.map",
+    "static/js/2.400d1dec.chunk.js": "/goit-react-hw-06-phonebook/static/js/2.400d1dec.chunk.js",
+    "static/js/2.400d1dec.chunk.js.map": "/goit-react-hw-06-phonebook/static/js/2.400d1dec.chunk.js.map",
     "index.html": "/goit-react-hw-06-phonebook/index.html",
-    "precache-manifest.df9d361a0067efb89584c9285885452b.js": "/goit-react-hw-06-phonebook/precache-manifest.df9d361a0067efb89584c9285885452b.js",
+    "precache-manifest.0b35b066858b2df607fc2ec68c7f029b.js": "/goit-react-hw-06-phonebook/precache-manifest.0b35b066858b2df607fc2ec68c7f029b.js",
     "service-worker.js": "/goit-react-hw-06-phonebook/service-worker.js",
     "static/css/2.66c32828.chunk.css.map": "/goit-react-hw-06-phonebook/static/css/2.66c32828.chunk.css.map",
-    "static/css/main.fa5e01cc.chunk.css.map": "/goit-react-hw-06-phonebook/static/css/main.fa5e01cc.chunk.css.map",
+    "static/css/main.8db701a7.chunk.css.map": "/goit-react-hw-06-phonebook/static/css/main.8db701a7.chunk.css.map",
     "static/media/notifications.css": "/goit-react-hw-06-phonebook/static/media/notification.c0d3c94c.eot"
   },
   "entrypoints": [
     "static/js/runtime-main.af6721dc.js",
     "static/css/2.66c32828.chunk.css",
-    "static/js/2.9c0d439d.chunk.js",
-    "static/css/main.fa5e01cc.chunk.css",
-    "static/js/main.7b08f2ab.chunk.js"
+    "static/js/2.400d1dec.chunk.js",
+    "static/css/main.8db701a7.chunk.css",
+    "static/js/main.473d8796.chunk.js"
   ]
 }
