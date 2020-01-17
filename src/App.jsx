@@ -1,8 +1,11 @@
-import React, { useState, useReducer, useMemo } from 'react';
+import React, { useState, useReducer, useMemo, useEffect } from 'react';
 import styles from './App.module.css';
 import shortId from 'shortid';
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer } from 'react-notifications';
+import {
+  NotificationContainer,
+  NotificationManager,
+} from 'react-notifications';
 import allContacts from './contacts.json';
 
 const contactsReduser = (state, action) => {
@@ -17,6 +20,7 @@ const contactsReduser = (state, action) => {
 };
 
 export default function App() {
+  //name & number
   const [name, setName] = useState('');
   const changeName = e => {
     setName(e.target.value);
@@ -26,21 +30,53 @@ export default function App() {
     setNumber(e.target.value);
   };
 
+  //contacts
+  //const initialContact = window.localStorage.getItem('contacts') || allContacts;
   const [contacts, dispatch] = useReducer(contactsReduser, allContacts);
 
-  const addContacts = (name, number) => {
+  useEffect(() => {
+    window.localStorage.setItem('contacts', contacts);
+  });
+  console.log(contacts);
+
+  const addContacts = e => {
+    e.preventDefault();
+
     const contact = {
       id: shortId.generate(),
-      name: name,
-      number: number,
+      name,
+      number,
     };
+    const filr = contacts.find(contact => {
+      return contact.name.toLowerCase() === name.toLowerCase();
+    });
+
+    if (filr !== undefined) {
+      NotificationManager.warning(
+        `${name} already exist`,
+        'Try another name',
+        3000,
+      );
+      return;
+    }
+    if (!name) {
+      NotificationManager.warning(
+        `Enter contact name`,
+
+        3000,
+      );
+      return;
+    }
     dispatch({ type: 'addContact', payload: { contact } });
+    setName('');
+    setNumber('');
   };
 
   const removeContact = contactId => {
     dispatch({ type: 'removeContact', payload: { contactId } });
   };
 
+  //filter
   const [filter, setFilter] = useState('');
   const changeFilter = e => {
     setFilter(e.target.value);
@@ -81,7 +117,6 @@ export default function App() {
           Add contact
         </button>
       </form>
-
       <h2 className={styles.AppText}>Contacts</h2>
       <section>
         <input
@@ -92,7 +127,6 @@ export default function App() {
           onChange={changeFilter}
         />
       </section>
-
       <ul>
         {filtredContacts.map(contact => (
           <li key={contact.id} className={styles.ContactListItem}>
