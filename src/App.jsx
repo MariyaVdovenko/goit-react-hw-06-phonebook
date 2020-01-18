@@ -7,8 +7,9 @@ import {
   NotificationManager,
 } from 'react-notifications';
 import allContacts from './contacts.json';
+import * as storage from './localStorage';
 
-const contactsReduser = (state, action) => {
+const contactsReducer = (state, action) => {
   switch (action.type) {
     case 'addContact':
       return [...state, action.payload.contact];
@@ -31,13 +32,14 @@ export default function App() {
   };
 
   //contacts
-  //const initialContact = window.localStorage.getItem('contacts') || allContacts;
-  const [contacts, dispatch] = useReducer(contactsReduser, allContacts);
 
+  const [contacts, dispatch] = useReducer(
+    contactsReducer,
+    storage.getLocalStorage('contacts') || allContacts,
+  );
   useEffect(() => {
-    window.localStorage.setItem('contacts', contacts);
-  });
-  console.log(contacts);
+    storage.saveToLocalStorage('contacts', contacts);
+  }, [contacts]);
 
   const addContacts = e => {
     e.preventDefault();
@@ -128,19 +130,20 @@ export default function App() {
         />
       </section>
       <ul>
-        {filtredContacts.map(contact => (
-          <li key={contact.id} className={styles.ContactListItem}>
-            <p className={styles.name}>
-              {contact.name}: {contact.number}
-            </p>
-            <button
-              className={styles.Button}
-              onClick={() => removeContact(contact.id)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
+        {filtredContacts &&
+          filtredContacts.map(contact => (
+            <li key={contact.id} className={styles.ContactListItem}>
+              <p className={styles.name}>
+                {contact.name}: {contact.number}
+              </p>
+              <button
+                className={styles.Button}
+                onClick={() => removeContact(contact.id)}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
       </ul>
 
       <NotificationContainer />
