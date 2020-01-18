@@ -8,12 +8,13 @@ import {
 } from 'react-notifications';
 import allContacts from './contacts.json';
 import * as storage from './localStorage';
+import * as constants from './constants';
 
 const contactsReducer = (state, action) => {
   switch (action.type) {
-    case 'addContact':
+    case constants.ADD_CONTACT:
       return [...state, action.payload.contact];
-    case 'removeContact':
+    case constants.RENOVE_CONTACT:
       return state.filter(contact => contact.id !== action.payload.contactId);
     default:
       return state;
@@ -35,10 +36,10 @@ export default function App() {
 
   const [contacts, dispatch] = useReducer(
     contactsReducer,
-    storage.getLocalStorage('contacts') || allContacts,
+    storage.getLocalStorage(constants.CONTACTS) || allContacts,
   );
   useEffect(() => {
-    storage.saveToLocalStorage('contacts', contacts);
+    storage.saveToLocalStorage(constants.CONTACTS, contacts);
   }, [contacts]);
 
   const addContacts = e => {
@@ -49,19 +50,18 @@ export default function App() {
       name,
       number,
     };
-    const filr = contacts.find(contact => {
+    const isUnique = contacts.find(contact => {
       return contact.name.toLowerCase() === name.toLowerCase();
     });
 
-    if (filr !== undefined) {
+    if (isUnique !== undefined) {
       NotificationManager.warning(
         `${name} already exist`,
         'Try another name',
         3000,
       );
       return;
-    }
-    if (!name) {
+    } else if (!name) {
       NotificationManager.warning(
         `Enter contact name`,
 
@@ -69,13 +69,13 @@ export default function App() {
       );
       return;
     }
-    dispatch({ type: 'addContact', payload: { contact } });
+    dispatch({ type: constants.ADD_CONTACT, payload: { contact } });
     setName('');
     setNumber('');
   };
 
   const removeContact = contactId => {
-    dispatch({ type: 'removeContact', payload: { contactId } });
+    dispatch({ type: constants.RENOVE_CONTACT, payload: { contactId } });
   };
 
   //filter
@@ -90,13 +90,17 @@ export default function App() {
     );
   });
 
+  const nameInputId = shortId.generate();
+  const numberInputId = shortId.generate();
+
   return (
     <div className={styles.App}>
       <h1 className={styles.AppText}>Phonebook</h1>
       <form className={styles.Form} onSubmit={addContacts}>
-        <label className={styles.Label}>
+        <label htmlFor={nameInputId} className={styles.Label}>
           <span className={styles.Label__text}>Name</span>
           <input
+            id={nameInputId}
             className={styles.Input}
             type="text"
             placeholder="Enter name (min 3 symb) "
@@ -105,7 +109,12 @@ export default function App() {
             onChange={changeName}
             pattern="[A-Za-z]{3,}"
           />
+        </label>
+        <label htmlFor={numberInputId} className={styles.Label}>
+          <span className={styles.Label__text}>Number</span>
+
           <input
+            id={numberInputId}
             className={styles.Input}
             type="number"
             placeholder="Enter number"
